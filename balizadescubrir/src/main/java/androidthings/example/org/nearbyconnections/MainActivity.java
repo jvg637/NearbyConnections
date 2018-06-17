@@ -17,10 +17,7 @@ import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
 import com.google.android.gms.nearby.connection.Strategy;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.things.pio.Gpio;
-import com.google.android.things.pio.PeripheralManager;
 
-import java.io.IOException;
 
 /**
  * Skeleton of an Android Things activity.
@@ -46,8 +43,6 @@ public class MainActivity extends Activity {
     // Consejo: utiliza como SERVICE_ID el nombre de tu paquete
     private static final String SERVICE_ID = "androidthings.example.org.nearbyconnections";
     private static final String TAG = "Things:";
-    private final String PIN_LED = "BCM18";
-    public Gpio mLedGpio;
 //    private Boolean ledStatus;
 
     @Override
@@ -55,20 +50,14 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         // Configuración del LED
 //        ledStatus = false;
-        PeripheralManager service = PeripheralManager.getInstance();
-        try {
-            mLedGpio = service.openGpio(PIN_LED);
-            mLedGpio.setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
-        } catch (IOException e) {
-            Log.e(TAG, "Error en el API PeripheralIO", e);
-        }
+
         // Arrancamos modo anunciante
         startAdvertising();
     }
 
     private void startAdvertising() {
         Nearby.getConnectionsClient(this).startAdvertising(
-                "Nearby LED", SERVICE_ID, mConnectionLifecycleCallback,
+                "Otro Movil Baliza", SERVICE_ID, mConnectionLifecycleCallback,
                 new AdvertisingOptions(Strategy.P2P_STAR))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -156,20 +145,17 @@ public class MainActivity extends Activity {
     };
 
     public void switchLED(boolean ledStatus) {
-        try {
-            if (!ledStatus) {
+        if (!ledStatus) {
 //            if (ledStatus) {
-                mLedGpio.setValue(false);
+//                    mLedGpio.setValue(false);
 //                ledStatus = false;
-                Log.i(TAG, "LED OFF");
-            } else {
-                mLedGpio.setValue(true);
+            Log.i(TAG, "LED OFF");
+        } else {
+//                    mLedGpio.setValue(true);
 //                ledStatus = true;
-                Log.i(TAG, "LED ON");
-            }
-        } catch (IOException e) {
-            Log.e(TAG, "Error en el API PeripheralIO", e);
+            Log.i(TAG, "LED ON");
         }
+
     }
 
     protected void disconnect(String endpointId) {
@@ -183,16 +169,6 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         stopAdvertising();
-        if (mLedGpio != null) {
-            try {
-                mLedGpio.close();
-            } catch (IOException e) {
-                Log.e(TAG, "Error en el API PeripheralIO", e);
-            } finally {
-                mLedGpio = null;
-            }
-        }
     }
 }
-
 
